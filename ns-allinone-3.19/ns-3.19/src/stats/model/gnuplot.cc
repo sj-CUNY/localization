@@ -713,8 +713,8 @@ std::string Gnuplot::DetectTerminal (const std::string& filename)
   if (filename.substr (dotpos) == ".png") {
       return "png";
     }
-  else if (filename.substr (dotpos) == ".pdf") {
-      return "pdf";
+  else if (filename.substr (dotpos) == ".ps") {
+      return "postscript";
     }
 
   return "";
