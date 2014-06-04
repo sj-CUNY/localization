@@ -16,7 +16,7 @@ PBS_HOME=/home/shweta.jain/build
 cd $PBS_O_WORKDIR
 pmodel=(1 2 3 4)
      for i in "${pmodel[@]}"; do
-        /home/shweta.jain/build/scratch/main-propagation-loss --pmodel=$i --out=plot$i.png > $i.out 2>&1
+        /home/shweta.jain/build/scratch/main-propagation-loss --pmodel=$i --out=plot$i.ps > $i.out 2>&1
      done
 done
 
