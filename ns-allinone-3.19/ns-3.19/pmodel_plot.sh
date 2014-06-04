@@ -12,7 +12,7 @@
 hostname
 # Change to working directory
 PBS_HOME=/home/shweta.jain/build
-
+hello
 cd $PBS_O_WORKDIR
 pmodel=(1 2 3 4)
      for i in "${pmodel[@]}"; do
