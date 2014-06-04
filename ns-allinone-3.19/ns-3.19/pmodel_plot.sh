@@ -11,7 +11,7 @@
 # Find out name of compute node
 hostname
 # Change to working directory
-PBS_HOME=/home/shweta.jain/ns3_igraph/branches/localization/ns3_igraph/ns-allinone-3.19/ns-3.19
+PBS_HOME=/home/shweta.jain/build
 
 cd $PBS_O_WORKDIR
 pmodel=(1 2 3 4)
