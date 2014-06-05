@@ -11,12 +11,12 @@
 # Find out name of compute node
 hostname
 # Change to working directory
-PBS_HOME=/home/shweta.jain/build
+PBS_HOME=/home/c.alvarez/build
 
 cd $PBS_O_WORKDIR
 pmodel=(1 2 3 4)
      for i in "${pmodel[@]}"; do
-        /home/shweta.jain/build/scratch/main-propagation-loss --pmodel=$i --out=plot$i.ps > $i.out 2>&1
+        /home/c.alvarez/build/scratch/main-propagation-loss --pmodel=$i --out=plot$i.ps > $i.out 2>&1
      done
 done
 
