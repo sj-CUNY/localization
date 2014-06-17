@@ -16,7 +16,6 @@ PBS_HOME=/home/c.alvarez/build
 cd $PBS_O_WORKDIR
 pmodel=(1 2 3 4)
      for i in "${pmodel[@]}"; do
-        /home/c.alvarez/build/scratch/main-propagation-loss --pmodel=$i --out=plot$i.ps > $i.out 2>&1
+        /home/c.alvarez/build/scratch/main-propagation-loss --pmodel=$i --out=plot$i.ps > plots/$i.out 2>&1
      done
-done
 
