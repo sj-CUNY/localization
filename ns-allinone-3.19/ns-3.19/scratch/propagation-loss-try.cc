@@ -56,11 +56,13 @@ TestDeterministic (Ptr<PropagationLossModel> model)
 {
   Ptr<ConstantPositionMobilityModel> a = CreateObject<ConstantPositionMobilityModel> ();
   Ptr<ConstantPositionMobilityModel> b = CreateObject<ConstantPositionMobilityModel> ();
+  Ptr<ConstantPositionMobilityModel> c = CreateObject<ConstantPositionMobilityModel> ();
 
   Gnuplot plot;
 
   plot.AppendExtra ("set xlabel 'Distance'");
   plot.AppendExtra ("set ylabel 'rxPower (dBm)'");
+  plot.AppendExtra ("set ylabel 'ryPower (dBm)'");
   plot.AppendExtra ("set key top right");
 
   double txPowerDbm = +20; // dBm
@@ -75,11 +77,14 @@ TestDeterministic (Ptr<PropagationLossModel> model)
     for (double distance = 0.0; distance < 2500.0; distance += 10.0)
       {
         b->SetPosition (Vector (distance, 0.0, 0.0));
+	c->SetPosition (Vector (0.0, distance, 0.0)); 
 
         // CalcRxPower() returns dBm.
         double rxPowerDbm = model->CalcRxPower (txPowerDbm, a, b);
+	double ryPowerDbm = model->CalcRxPower (txPowerDbm, a, c);
 
         dataset.Add (distance, rxPowerDbm);
+	dataset.Add (distance, ryPowerDbm); 
 
         Simulator::Stop (Seconds (1.0));
         Simulator::Run ();
