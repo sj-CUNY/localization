@@ -67,9 +67,9 @@ TestDeterministic (Ptr<PropagationLossModel> model)
 
   double txPowerDbm = +20; // dBm
 
-  Gnuplot2dDataset dataset;
+  Gnuplot3dDataset dataset;
 
-  dataset.SetStyle (Gnuplot2dDataset::LINES);
+ // dataset.SetStyle (Gnuplot3dDataset::LINES);
 
   {
     a->SetPosition (Vector (0.0, 0.0, 0.0));
@@ -83,8 +83,8 @@ TestDeterministic (Ptr<PropagationLossModel> model)
         double rxPowerDbm = model->CalcRxPower (txPowerDbm, a, b);
 	double ryPowerDbm = model->CalcRxPower (txPowerDbm, a, c);
 
-        dataset.Add (distance, rxPowerDbm);
-	dataset.Add (distance, ryPowerDbm); 
+        dataset.Add (distance, rxPowerDbm, ryPowerDbm);
+	//dataset.Add (distance, ryPowerDbm); 
 
         Simulator::Stop (Seconds (1.0));
         Simulator::Run ();
@@ -97,7 +97,7 @@ TestDeterministic (Ptr<PropagationLossModel> model)
 
   plot.AddDataset (dataset);
 
-  plot.AddDataset ( Gnuplot2dFunction ("-94 dBm CSThreshold", "-94.0") );
+ // plot.AddDataset ( Gnuplot3dFunction ("-94 dBm CSThreshold", "-94.0") );
 
   return plot;
 }
