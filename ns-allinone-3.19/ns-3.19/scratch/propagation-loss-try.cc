@@ -107,6 +107,7 @@ TestProbabilistic (Ptr<PropagationLossModel> model, unsigned int samples = 10000
 {
   Ptr<ConstantPositionMobilityModel> a = CreateObject<ConstantPositionMobilityModel> ();
   Ptr<ConstantPositionMobilityModel> b = CreateObject<ConstantPositionMobilityModel> ();
+  Ptr<ConstantPositionMobilityMofel> c = CreateObject<ConstantPositionMobilityModel> ();
 
   Gnuplot plot;
 
@@ -129,6 +130,7 @@ TestProbabilistic (Ptr<PropagationLossModel> model, unsigned int samples = 10000
   dataset.SetExtra ("pointtype 3 pointsize 0.5");
 
   typedef std::map<double, unsigned int> rxPowerMapType;
+  typedef std::map<double, unsigned int> ryPowerMapType;
 
   // Take given number of samples from CalcRxPower() and show probability
   // density for discrete distances.
@@ -138,8 +140,10 @@ TestProbabilistic (Ptr<PropagationLossModel> model, unsigned int samples = 10000
     for (double distance = 100.0; distance < 2500.0; distance += 100.0)
       {
         b->SetPosition (Vector (distance, 0.0, 0.0));
+	c->SetPosition (Vector (0.0, distance, 0.0));
 
         rxPowerMapType rxPowerMap;
+	ryPowerMapType ryPowerMap;
 
         for (unsigned int samp = 0; samp < samples; ++samp)
           {
@@ -148,6 +152,12 @@ TestProbabilistic (Ptr<PropagationLossModel> model, unsigned int samples = 10000
             rxPowerDbm = dround (rxPowerDbm, 1.0);
 
             rxPowerMap[ rxPowerDbm ]++;
+	  
+	    // CalcRyPower() return dBm.
+	   double ryPowerDbm = model->CalcRxPower (txPowerDbm, a, c);//Thislinemaybewrong 
+	   ryPowerDbm = dround (ryPowerDbm, 1.0);
+
+	   ryPowerMap[ ryPowerDbm ]++;
 
             Simulator::Stop (Seconds (0.01));
             Simulator::Run ();
@@ -159,6 +169,14 @@ TestProbabilistic (Ptr<PropagationLossModel> model, unsigned int samples = 10000
             dataset.Add (distance, i->first, (double)i->second / (double)samples);
           }
         dataset.AddEmptyLine ();
+
+	for (ryPowerMapType::const_iterator j = ryPowerMap.begin ();
+	     j != ryPowerMap.end (); ++j)
+	  {
+	   dataset.Add (distance, j->first, (double)j->second / (double)samples);
+	  }
+	dataset.AddEmptyLine ();
+
       }
   }
 
@@ -179,6 +197,7 @@ TestDeterministicByTime (Ptr<PropagationLossModel> model,
 {
   Ptr<ConstantPositionMobilityModel> a = CreateObject<ConstantPositionMobilityModel> ();
   Ptr<ConstantPositionMobilityModel> b = CreateObject<ConstantPositionMobilityModel> ();
+  Ptr<ConstantPositionMobilityModel> c = CreateObject<ConstantPositionMobilityModel> ();
 
   Gnuplot plot;
 
@@ -190,20 +209,25 @@ TestDeterministicByTime (Ptr<PropagationLossModel> model,
 
   Gnuplot2dDataset dataset;
 
+// ******** fix the 3D Gnuplot2dDatase::lines) see privious code changes 
+
   dataset.SetStyle (Gnuplot2dDataset::LINES);
 
   {
     a->SetPosition (Vector (0.0, 0.0, 0.0));
     b->SetPosition (Vector (distance, 0.0, 0.0));
-
+    c->SetPosition (Vector (0.0, distance, 0.0));
+ 
     Time start = Simulator::Now ();
     while( Simulator::Now () < start + timeTotal )
       {
         // CalcRxPower() returns dBm.
         double rxPowerDbm = model->CalcRxPower (txPowerDbm, a, b);
+	double ryPowerDbm = model->CalcRxPower (txPowerDbm, a, c);
 
         Time elapsed = Simulator::Now () - start;
         dataset.Add (elapsed.GetSeconds (), rxPowerDbm);
+	dataset.Add (elapsed.GetSeconds (), ryPowerDbm);
 
         Simulator::Stop (timeStep);
         Simulator::Run ();
@@ -215,6 +239,7 @@ TestDeterministicByTime (Ptr<PropagationLossModel> model,
   dataset.SetTitle (os.str ());
 
   plot.AddDataset (dataset);
+//plot.AddDataset (dataset);
 
   plot.AddDataset ( Gnuplot2dFunction ("-94 dBm CSThreshold", "-94.0") );
 
