@@ -34,6 +34,12 @@
 
 using namespace ns3;
 
+struct rxy
+{ 
+  unsigned int a; 
+  unsigned int b;
+};
+
 /// Round a double number to the given precision. e.g. dround(0.234, 0.1) = 0.2
 /// and dround(0.257, 0.1) = 0.3
 static double dround (double number, double precision)
@@ -129,15 +135,10 @@ TestProbabilistic (Ptr<PropagationLossModel> model, unsigned int samples = 10000
   dataset.SetStyle ("with linespoints");
   dataset.SetExtra ("pointtype 3 pointsize 0.5");
 
-  struct rxy 
-  { unsigned int a; 
-    unsigned int b;
-  };
-
  // typedef std::map<double, unsigned int> rxPowerMapType;
  // typedef std::map<double, unsigned int> ryPowerMapType;
 
-  typedef std::map<double,struct rxy> rxyPowerMapType; 
+  typedef std::map<double, rxy> rxyPowerMapType; 
 
   // Take given number of samples from CalcRxPower() and show probability
   // density for discrete distances.
@@ -164,9 +165,13 @@ TestProbabilistic (Ptr<PropagationLossModel> model, unsigned int samples = 10000
 	    // CalcRyPower() return dBm.
 	   double ryPowerDbm = model->CalcRxPower (txPowerDbm, a, c);//Thislinemaybewrong 
 	   ryPowerDbm = dround (ryPowerDbm, 1.0);
-
-	   rxyPowerMap[ rxPowerDbm ].a++;
- 	   rxyPowerMap[ ryPowerDbm ].b++;
+	   rxy temp = rxyPowerMap[rxPowerDbm];
+           temp.a++;
+	   rxyPowerMap[ rxPowerDbm ] = temp;
+   
+           temp = rxyPowerMap[ ryPowerDbm ];
+           temp.b++;
+	   rxyPowerMap[ ryPowerDbm ] = temp;
 
             Simulator::Stop (Seconds (0.01));
             Simulator::Run ();
@@ -182,7 +187,8 @@ TestProbabilistic (Ptr<PropagationLossModel> model, unsigned int samples = 10000
 	for (rxyPowerMapType::const_iterator j = rxyPowerMap.begin ();
 	     j != rxyPowerMap.end (); ++j)
 	  {
-	   dataset.Add ( j->first, (struct rxy)(j->second).a / (double)samples, (struct rxy)(j->second).b/(double)samples);
+	   rxy tmp = j->second;
+	   dataset.Add ( j->first, tmp.a / (double)samples, tmp.b/(double)samples);
 	  }
 	dataset.AddEmptyLine ();
 
