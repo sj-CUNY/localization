@@ -222,7 +222,7 @@ TestDeterministicByTime (Ptr<PropagationLossModel> model,
 
   double txPowerDbm = +20; // dBm
 
-  Gnuplot2dDataset dataset;
+  Gnuplot3dDataset dataset;
 
 // ******** fix the 3D Gnuplot2dDatase::lines) see privious code changes 
 
@@ -241,8 +241,8 @@ TestDeterministicByTime (Ptr<PropagationLossModel> model,
 	double ryPowerDbm = model->CalcRxPower (txPowerDbm, a, c);
 
         Time elapsed = Simulator::Now () - start;
-        dataset.Add (elapsed.GetSeconds (), rxPowerDbm);
-	dataset.Add (elapsed.GetSeconds (), ryPowerDbm);
+        dataset.Add (elapsed.GetSeconds (), rxPowerDbm,ryPowerDbm);
+	//dataset.Add (elapsed.GetSeconds (), ryPowerDbm);
 
         Simulator::Stop (timeStep);
         Simulator::Run ();
@@ -350,7 +350,7 @@ int main (int argc, char *argv[])
     Config::SetDefault ("ns3::JakesProcess::DopplerFrequencyHz", DoubleValue (477.9));
 
     Gnuplot plot = TestDeterministicByTime (jakes, Seconds (0.001), Seconds (1.0));
-    plot.SetTitle ("ns3::JakesPropagationLossModel (with 477.9 Hz shift and 1 millisec resolution)");
+  // plot.SetTitle ("ns3::JakesPropagationLossModel (with 477.9 Hz shift and 1 millisec resolution)");
     gnuplots.AddPlot (plot);
   }
 
@@ -361,8 +361,8 @@ int main (int argc, char *argv[])
     Config::SetDefault ("ns3::JakesProcess::DopplerFrequencyHz", DoubleValue (477.9));
 
     Gnuplot plot = TestDeterministicByTime (jakes, Seconds (0.0001), Seconds (0.1));
-    plot.SetTitle ("ns3::JakesPropagationLossModel (with 477.9 Hz shift and 0.1 millisec resolution)");
-    gnuplots.AddPlot (plot);
+   // plot.SetTitle ("ns3::JakesPropagationLossModel (with 477.9 Hz shift and 0.1 millisec resolution)");
+   gnuplots.AddPlot (plot);
   }
 
  }
